@@ -31,3 +31,4 @@ eggs/
 !tests/data
 *.pb
 events.*
+*.out

@@ -98,24 +98,26 @@ SAVE_DIR=~/vit_10b_fsdp_example_ckpts  # this can be any directory (it doesn't n
 mkdir -p ${SAVE_DIR}
 cd ${HOME} && python3 -m torch_xla.distributed.xla_dist \
   --tpu=${TPU_NAME} --restart-tpuvm-pod-server --env PYTHONUNBUFFERED=1 -- \
-python3 -u ~/vit_10b_fsdp_example/run_vit_training.py \
-  --data_dir /checkpoint/imagenet-1k \
+
+SAVE_DIR=~/disk3-400/vit_10b_fsdp_example_ckpts 
+python3 -u run_vit_training.py \
+  --data_dir /home/lumine7x/disk3-400/imagenet\
   --ckpt_dir ${SAVE_DIR} \
   --image_size 224 \
-  --patch_size 14 \
-  --embed_dim 5120 \
+  --patch_size 16 \
+  --embed_dim 256 \
   --mlp_ratio 4.0 \
-  --num_heads 32 \
-  --num_blocks 32 \
-  --batch_size 1024 \
+  --num_heads 8 \
+  --num_blocks 12 \
+  --batch_size 2048 \
   --num_epochs 300 \
   --lr 1e-3 \
-  --weight_decay 0.1 \
-  --clip_grad_norm 1.0 \
-  --warmup_steps 10000 \
+  --weight_decay 0.05 \
+  --clip_grad_norm 10 \
+  --warmup_steps 5000 \
   --log_step_interval 20 \
   --shard_on_cpu \
-  2>&1 | tee ${SAVE_DIR}/stdout_stderr_$(date +%Y-%m-%d_%H-%M-%S).log
+  --run_without_fsdp >${SAVE_DIR}/stdout_stderr_$(date +%Y-%m-%d_%H-%M-%S).log 2>&1 
 ```
 Note that these hyperparameters (e.g. learning rate) are not necessarily optimal and you may need to tweak them to get the best performance. You can also use `--fake_data` to run on fake datasets (dummy images filled with all zeros). As a comparison, you can pass `--run_without_fsdp` to launch without FSDP, which can only fit much smaller model sizes.
 

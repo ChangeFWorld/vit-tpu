@@ -408,7 +408,7 @@ class Block(nn.Module):
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         # self.mlp = Mlp_block(in_features=dim, hidden_features=mlp_hidden_dim, act_layer=act_layer, drop=drop)
-        self.mlp = FusedSparseECMoeBlock(embed_dim=dim, mlp_ratio=1, num_experts=10, num_experts_per_tok=2, n_shared_experts=1, actless=actless, ffn_type='ori')
+        self.mlp = FusedSparseECMoeBlock(embed_dim=dim, mlp_ratio=1, num_experts=8, num_experts_per_tok=2, n_shared_experts=1, actless=actless, expert_hidden_dim=512, ffn_type='ori')
     def forward(self, x):
         x = x + self.drop_path(self.attn(self.norm1(x)))
         x = x + self.drop_path(self.mlp(self.norm2(x)))
@@ -516,7 +516,7 @@ class vit_models(nn.Module):
 
 def vit_medium_patch32(pretrained=False, img_size=224, pretrained_21k = False, **kwargs):
     model = vit_models(
-        patch_size=32, embed_dim=512, depth=24, num_heads=8, mlp_ratio=4, qkv_bias=True,
+        patch_size=32, embed_dim=512, depth=12, num_heads=8, mlp_ratio=4, qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),block_layers = Block, **kwargs)
     model.default_cfg = _cfg()
     return model 
@@ -926,4 +926,4 @@ if __name__ == "__main__":
     xmp.spawn(main, args=(cfg,))
 
 
-    # python3 -u run_vit_training.py   --data_dir /home/lumine7x/disk3-400/imagenet  --ckpt_dir ${SAVE_DIR}   --image_size 224   --patch_size 16   --embed_dim 256   --mlp_ratio 4.0   --num_heads 8   --num_blocks 12   --batch_size 2048   --num_epochs 300   --lr 1e-3   --weight_decay 0.05   --clip_grad_norm 10   --warmup_steps 5000   --log_step_interval 40   --shard_on_cpu
+    # python3 -u run_vit_training.py   --data_dir /home/lumine7x/disk3-400/imagenet  --ckpt_dir ${SAVE_DIR}   --image_size 224   --patch_size 16   --embed_dim 256   --mlp_ratio 4.0   --num_heads 8   --num_blocks 12   --batch_size 1024   --num_epochs 300   --lr 1e-3   --weight_decay 0.05   --clip_grad_norm 10   --warmup_steps 5000   --log_step_interval 40   --shard_on_cpu

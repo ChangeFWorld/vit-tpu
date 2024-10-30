@@ -449,8 +449,8 @@ class vit_models(nn.Module):
             block_layers(
                 dim=embed_dim, num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
                 drop=0.0, attn_drop=attn_drop_rate, drop_path=dpr[i], norm_layer=norm_layer,
-                # act_layer=act_layer,Attention_block=Attention_block,Mlp_block=Mlp_block,init_values=init_scale, actless=False if i<2 or i>=depth-2 else True)
-                act_layer=act_layer,Attention_block=Attention_block,Mlp_block=Mlp_block,init_values=init_scale, actless=False)
+                act_layer=act_layer,Attention_block=Attention_block,Mlp_block=Mlp_block,init_values=init_scale, actless=False if i<2 or i>=depth-2 else True)
+                # act_layer=act_layer,Attention_block=Attention_block,Mlp_block=Mlp_block,init_values=init_scale, actless=False)
             for i in range(depth)])
         
 
@@ -888,7 +888,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--ckpt_dir", type=str, default="/tmp/vit_fsdp")
     parser.add_argument("--resume_epoch", type=int, default=0)
-    parser.add_argument("--ckpt_epoch_interval", type=int, default=20)
+    parser.add_argument("--ckpt_epoch_interval", type=int, default=50)
     parser.add_argument("--test_epoch_interval", type=int, default=1)
     parser.add_argument("--log_step_interval", type=int, default=40)
 
